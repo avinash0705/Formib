@@ -30,8 +30,6 @@ export const saveFormToLocalStorage = (formState: any): Promise<string> => {
           localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(formState));
           return Promise.resolve("Form Saved");
         });
-  
-        toast.success("Form saved successfully!", { position: 'bottom-left' });
         return "Form Saved";
       } catch (error) {
         console.error("Error saving form data to localStorage:", error);

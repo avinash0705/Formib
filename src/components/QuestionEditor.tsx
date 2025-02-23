@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { FormContext } from "../context/FormContext";
-import { Accordion, AccordionTab } from "primereact/accordion";
+import { Accordion, AccordionTab, AccordionTabChangeEvent } from "primereact/accordion";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
@@ -15,12 +15,15 @@ import { validateQuestion, ValidationErrors } from "../services/validationServic
 import { useDebounce } from "../util";
 import { questionTypes, textTypes } from "../config";
 import { Chips } from 'primereact/chips';
+import toast from 'react-hot-toast';
 
 
 
 const QuestionEditor: React.FC = () => {
     const formContext = useContext(FormContext);
     const [errors, setErrors] = useState<Record<string, ValidationErrors>>({});
+    const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
 
     if (!formContext) {
         throw new Error("QuestionEditor must be used within a FormProvider");
@@ -112,8 +115,12 @@ const QuestionEditor: React.FC = () => {
 
     };
 
-
     const addQuestion = () => {
+        if (Object.keys(errors).length > 0) {
+            toast.dismiss();
+            toast.error("Please fix errors to proceed", { position: 'bottom-left' });
+            return;
+        }
         const newQuestion: Question = {
             id: uuidv4(),
             label: "",
@@ -130,7 +137,9 @@ const QuestionEditor: React.FC = () => {
             options: [],
         };
         dispatch({ type: "ADD_QUESTION", payload: newQuestion });
+        setActiveIndex(questions.length);
     };
+    const debounceAddQuestion = useDebounce(addQuestion, 2000, {leading: true, trailing: false});
 
     
 
@@ -145,18 +154,18 @@ const QuestionEditor: React.FC = () => {
                 <Button
                     label="Add Question"
                     icon="pi pi-plus"
-                    onClick={addQuestion}
+                    onClick={debounceAddQuestion}
                     className="mb-4 p-button-sm p-button-outlined p-button-primary "
                 />
             </div>
 
-            <Accordion >
+            <Accordion activeIndex={activeIndex} onTabChange={(e: AccordionTabChangeEvent) => setActiveIndex(e.index as number)}>
                 {questions.map((question, idx) => {
                     return (
                         <AccordionTab
                             key={question.id}
                             headerClassName="head"
-                            unstyled={true}
+                            
                             header={
                                 <div className="flex justify-content-between align-items-center	 items-center w-full h-full">
                                         <span className="font-semibold text-base ques-title hidden sm:block ">
