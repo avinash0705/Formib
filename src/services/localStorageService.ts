@@ -1,7 +1,8 @@
 import { FORM_STORAGE_KEY } from "../config";
 import toast from 'react-hot-toast';
+import { debouncePromise } from "../util";
 
-const retryAction = async (action: Function, retries: number = 3, delay: number = 1000, errorProbability: number = 0.5) => {
+const retryAction = async (action: Function, retries: number = 3, delay: number = 1000, errorProbability: number = 0.2) => {
   let lastError = null;
   
   for (let attempt = 0; attempt < retries; attempt++) {
@@ -22,24 +23,29 @@ const retryAction = async (action: Function, retries: number = 3, delay: number 
   throw lastError;
 };
 
-export const saveFormToLocalStorage = async (formState: any) => {
-    try {
-      await retryAction(() => {
-        localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(formState));
-        return Promise.resolve("Form Saved");
-      });
-      return "Form Saved";
-    } catch (error) {
-      console.error("Error saving form data to localStorage:", error);
-      
-      toast.dismiss();
+export const saveFormToLocalStorage = (formState: any): Promise<string> => {
+    const saveForm = async (): Promise<string> => {
+      try {
+        await retryAction(() => {
+          localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(formState));
+          return Promise.resolve("Form Saved");
+        });
   
-      toast.error("Failed to save form data, Please try saving manually again", {
-        position: 'bottom-left'
-      });
+        toast.success("Form saved successfully!", { position: 'bottom-left' });
+        return "Form Saved";
+      } catch (error) {
+        console.error("Error saving form data to localStorage:", error);
+        toast.dismiss();
+        toast.error("Failed to save form data, Please try saving manually again", {
+          position: 'bottom-left',
+        });
+        return "";
+      }
+    };
   
-      return error;
-    }
+    const debouncedSave = debouncePromise(saveForm, 3000);
+  
+    return debouncedSave();
   };
 
 export const loadFormFromLocalStorage = async (): Promise<any | null> => {
