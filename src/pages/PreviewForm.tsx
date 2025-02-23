@@ -67,7 +67,7 @@ const PreviewForm: React.FC = () => {
             console.log("Validation failed:", validationErrors);
         } else {
             console.log("Form submitted successfully with answers:", answers);
-            toast.success("Form saved successfully!", { position: 'bottom-left' });
+            toast.success("Form submitted successfully!", { position: 'bottom-left' });
             setIsSubmitted(true);
         }
     };
@@ -77,34 +77,37 @@ const PreviewForm: React.FC = () => {
     }
 
     return (
-        <div className="p-1">
+        <div className="p-3">
             <h2 className="text-xl font-bold mb-4">{formName || "Preview Form"}</h2>
 
             {isSubmitted ? (
-                <div>
-                    <h3 className="font-semibold text-xl">Form Submission Summary</h3>
-                    <div className="mt-4">
-                        <ul>
-                            {answers.map((answer) => {
-                                const question = questions.find((q) => q.id === answer.questionId);
-                                return (
-                                    <li key={answer.questionId} className="mb-2">
-                                        <strong>{question?.label}</strong>: {answer.ans || "No answer"}
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    </div>
-                    <button
-                        className="p-button p-component mt-4"
-                        onClick={() => {
-                            setIsSubmitted(false);
-                            setAnswers(answers.map((a) => ({ ...a, ans: null })));
-                        }}
-                    >
-                        Fill Again
-                    </button>
+                <div className="p-0">
+                    <Card>
+                        <h3 className="font-semibold text-xl mb-2">Form Submission Summary</h3>
+                        {answers.map((answer, index) => {
+                            const question = questions.find((q) => q.id === answer.questionId);
+                            return (
+                                <div key={answer.questionId} className="mb-2">
+                                    <p className="font-medium break-words">
+                                        <strong>Q {index + 1}:</strong> {question?.label}
+                                    </p>
+                                    <p className="break-words">{answer.ans || "No answer"}</p>
+                                </div>
+                            );
+                        })}
+                        <button
+                            className="p-button p-component mt-4"
+                            onClick={() => {
+                                setIsSubmitted(false);
+                                setAnswers(answers.map((a) => ({ ...a, ans: null })));
+                            }}
+                        >
+                            Fill Again
+                        </button>
+                    </Card>
                 </div>
+
+
             ) : (
                 <>
                     {questions.length === 0 ? (
@@ -117,7 +120,11 @@ const PreviewForm: React.FC = () => {
                                 return (
                                     <div key={question.id} className="mb-4">
                                         <div className="flex justify-content-between items-center gap-2 mb-2">
-                                            <label htmlFor={question.id} className="text-sm font-medium text--blue-200">
+                                            <label
+                                                htmlFor={question.id}
+                                                className="text-sm font-medium"
+                                                style={{ maxWidth: "calc(100% - 30px)", wordBreak: "break-word" }}
+                                            >
                                                 {question.label}
                                                 {question.required && <span className="text-red"> *</span>}
                                             </label>
@@ -133,6 +140,7 @@ const PreviewForm: React.FC = () => {
                                                 value={(answer || "") as string}
                                                 onChange={(e) => handleInputChange(question.id, e.target.value)}
                                                 className={`w-full p-inputtext-sm ${errors[question.id] ? "p-invalid" : ""}`}
+                                                style={{ maxWidth: "100%", overflow: "hidden" }}
                                             />
                                         )}
 
@@ -143,6 +151,7 @@ const PreviewForm: React.FC = () => {
                                                 maxLength={question.maxLength || 200}
                                                 onChange={(e) => handleInputChange(question.id, e.value)}
                                                 className={`w-full p-inputtext-sm ${errors[question.id] ? "p-invalid" : ""}`}
+                                                style={{ maxWidth: "100%", overflow: "hidden" }}
                                             />
                                         )}
 
@@ -153,6 +162,7 @@ const PreviewForm: React.FC = () => {
                                                 onChange={(e) => handleInputChange(question.id, e.value)}
                                                 placeholder="Select an option"
                                                 className={`w-full p-dropdown-lg ${errors[question.id] ? "p-invalid" : ""}`}
+                                                style={{ maxWidth: "100%", overflow: "hidden" }}
                                             />
                                         )}
 
@@ -162,9 +172,11 @@ const PreviewForm: React.FC = () => {
                             })}
                         </Card>
                     )}
-                    <button className="p-button p-component" onClick={handleSubmit}>
-                        Submit
-                    </button>
+                    {questions.length > 0 && (
+                        <button className="p-button p-component" onClick={handleSubmit}>
+                            Submit
+                        </button>
+                    )}
                 </>
             )}
         </div>

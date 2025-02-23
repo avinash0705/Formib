@@ -35,7 +35,9 @@ const FormHeader: React.FC = () => {
 
         if (response === "Form Saved") {
           setSaveResult('success');
-          toast.success("Form saved successfully!", { position: 'bottom-left' });
+          if(state.questions.length > 0) {
+            toast.success("Form updated successfully!", { position: 'bottom-left' });
+          }
         }
       } catch (error) {
         setSaveResult('failed');
