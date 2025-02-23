@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import { FormProvider } from './context/FormContext';
+import FormBuilder from './pages/FormBuilder';
+import PreviewForm from './pages/PreviewForm';
+import { Toaster } from 'react-hot-toast';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <FormProvider>
+      <Router>
+        <div className="flex flex-column h-screen">
+          <Navbar />
+          
+          <div className="flex justify-content-center flex-1 overflow-auto p-4">
+            <div className="w-full md:w-8 lg:w-6">
+              <Routes>
+                <Route path="/" element={<FormBuilder />} />
+                <Route path="/preview" element={<PreviewForm />} />
+              </Routes>
+            </div>
+          </div>
+        </div>
+          <Toaster/>
+        </Router>
+    </FormProvider>
   );
-}
+};
 
 export default App;

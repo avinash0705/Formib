@@ -1,0 +1,15 @@
+.navbar-container {
+    background-color: #f8f9fa;
+    padding: 10px 0;
+  }
+  
+  .active-menu-item {
+    font-weight: bold;
+    color: #007bff !important;
+    background-color: rgba(0, 123, 255, 0.1);
+    border-radius: 4px;
+  }
+  .p-accordion-header-link{
+    padding: 0.25em 1.25em;
+}
+  

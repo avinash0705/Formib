@@ -1,0 +1,30 @@
+.p-accordion-header-text{
+    justify-content: space-between;
+    display: flex;
+}
+
+.p-inputnumber-input, .p-inputtext-sm{
+    width: 100% ;
+}
+
+.p-chips-token{
+    margin-bottom: 4px;
+}
+
+
+.p-tooltip {
+    max-width: 200px; /* Adjust as needed */
+    white-space: normal; /* Wraps text properly */
+}
+.p-accordion-header-text{
+    max-width: calc(100% - 24px);
+}
+
+.ques-title{
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: normal;
+}
